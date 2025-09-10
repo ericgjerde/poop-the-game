@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whose Poo? - The Ultimate Animal Poop Quiz!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <header>
+            <h1>💩 Whose Poo? 🔍</h1>
+            <div id="game-stats">
+                <div class="stat">
+                    <span class="stat-label">Score:</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Streak:</span>
+                    <span id="streak">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Round:</span>
+                    <span id="round">1/40</span>
+                </div>
+            </div>
+        </header>
+
+        <div id="start-screen" class="screen active">
+            <div class="content">
+                <h2>Welcome to Whose Poo?</h2>
+                <p>Can you identify animals by their droppings?</p>
+                <div class="difficulty-select">
+                    <h3>Choose Difficulty:</h3>
+                    <button class="btn difficulty-btn" data-difficulty="easy">
+                        🐣 Easy
+                        <span class="difficulty-desc">Common animals, clear differences</span>
+                    </button>
+                    <button class="btn difficulty-btn" data-difficulty="medium">
+                        🦊 Medium
+                        <span class="difficulty-desc">Mix of common and unusual animals</span>
+                    </button>
+                    <button class="btn difficulty-btn" data-difficulty="hard">
+                        🦎 Hard
+                        <span class="difficulty-desc">Includes insects and rare animals</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div id="poop-display">
+                <div id="poop-container">
+                    <canvas id="poop-canvas" width="300" height="300"></canvas>
+                    <div id="poop-hints">
+                        <button id="hint-btn" class="power-up-btn">
+                            💡 Hint (-50 pts)
+                        </button>
+                        <button id="fifty-fifty-btn" class="power-up-btn">
+                            50/50 (-25 pts)
+                        </button>
+                    </div>
+                </div>
+                <div id="hint-text" class="hidden"></div>
+            </div>
+
+            <div id="choices-container">
+                <button class="choice-btn" data-choice="0">
+                    <div class="animal-img"></div>
+                    <span class="animal-name"></span>
+                </button>
+                <button class="choice-btn" data-choice="1">
+                    <div class="animal-img"></div>
+                    <span class="animal-name"></span>
+                </button>
+                <button class="choice-btn" data-choice="2">
+                    <div class="animal-img"></div>
+                    <span class="animal-name"></span>
+                </button>
+                <button class="choice-btn" data-choice="3">
+                    <div class="animal-img"></div>
+                    <span class="animal-name"></span>
+                </button>
+            </div>
+
+            <div id="feedback" class="hidden">
+                <h3 id="feedback-title"></h3>
+                <p id="feedback-text"></p>
+                <p id="fun-fact"></p>
+                <button id="next-btn" class="btn">Next Poop!</button>
+            </div>
+        </div>
+
+        <div id="end-screen" class="screen">
+            <div class="content">
+                <h2>Game Complete!</h2>
+                <div id="final-stats">
+                    <p>Final Score: <span id="final-score">0</span></p>
+                    <p>Correct Answers: <span id="correct-count">0</span>/40</p>
+                    <p>Best Streak: <span id="best-streak">0</span></p>
+                    <p>Accuracy: <span id="accuracy">0</span>%</p>
+                </div>
+                <div id="rank"></div>
+                <button id="play-again-btn" class="btn">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="animalData.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
