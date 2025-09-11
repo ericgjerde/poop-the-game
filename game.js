@@ -172,6 +172,21 @@ class PoopGame {
             case 'log':
                 this.drawLog(ctx, centerX, centerY, scale);
                 break;
+            case 'doglog':
+                this.drawDogLog(ctx, centerX, centerY, scale);
+                break;
+            case 'catlog':
+                this.drawCatLog(ctx, centerX, centerY, scale);
+                break;
+            case 'tigerlog':
+                this.drawTigerLog(ctx, centerX, centerY, scale);
+                break;
+            case 'piglog':
+                this.drawPigLog(ctx, centerX, centerY, scale);
+                break;
+            case 'pandalog':
+                this.drawPandaLog(ctx, centerX, centerY, scale);
+                break;
             case 'splat':
                 this.drawSplat(ctx, centerX, centerY, scale);
                 break;
@@ -180,6 +195,12 @@ class PoopGame {
                 break;
             case 'balls':
                 this.drawBalls(ctx, centerX, centerY, scale);
+                break;
+            case 'horseballs':
+                this.drawHorseBalls(ctx, centerX, centerY, scale);
+                break;
+            case 'elephantboulder':
+                this.drawElephantBoulder(ctx, centerX, centerY, scale);
                 break;
             case 'cube':
                 this.drawCube(ctx, centerX, centerY, scale);
@@ -204,6 +225,21 @@ class PoopGame {
                 break;
             case 'crumble':
                 this.drawCrumble(ctx, centerX, centerY, scale);
+                break;
+            case 'capsule':
+                this.drawCapsule(ctx, centerX, centerY, scale);
+                break;
+            case 'pellet':
+                this.drawSinglePellet(ctx, centerX, centerY, scale);
+                break;
+            case 'bolus':
+                this.drawBolus(ctx, centerX, centerY, scale);
+                break;
+            case 'cylinder':
+                this.drawCylinder(ctx, centerX, centerY, scale);
+                break;
+            case 'blob':
+                this.drawBlob(ctx, centerX, centerY, scale);
                 break;
             default:
                 this.drawGenericPoop(ctx, centerX, centerY, scale);
@@ -461,6 +497,324 @@ class PoopGame {
         ctx.arc(x + 5 * scale, y - 25 * scale, 10 * scale, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
+    }
+    
+    // DISTINCT DOG POOP
+    drawDogLog(ctx, x, y, scale) {
+        // Classic tapered dog poop with segments
+        ctx.beginPath();
+        ctx.moveTo(x - 35 * scale, y);
+        ctx.bezierCurveTo(
+            x - 30 * scale, y - 12 * scale,
+            x - 10 * scale, y - 10 * scale,
+            x + 5 * scale, y - 8 * scale
+        );
+        ctx.bezierCurveTo(
+            x + 15 * scale, y - 6 * scale,
+            x + 25 * scale, y - 4 * scale,
+            x + 35 * scale, y
+        );
+        ctx.bezierCurveTo(
+            x + 30 * scale, y + 8 * scale,
+            x + 10 * scale, y + 12 * scale,
+            x - 35 * scale, y + 5 * scale
+        );
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        // Add segment lines
+        ctx.beginPath();
+        ctx.moveTo(x - 10 * scale, y - 10 * scale);
+        ctx.lineTo(x - 10 * scale, y + 8 * scale);
+        ctx.moveTo(x + 10 * scale, y - 8 * scale);
+        ctx.lineTo(x + 10 * scale, y + 10 * scale);
+        ctx.globalAlpha = 0.3;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+    }
+    
+    // DISTINCT CAT POOP
+    drawCatLog(ctx, x, y, scale) {
+        // Smaller, more uniform cylinders typical of cats
+        for (let i = 0; i < 3; i++) {
+            const offsetX = (i - 1) * 20 * scale;
+            const offsetY = (i - 1) * 5 * scale;
+            
+            ctx.beginPath();
+            ctx.moveTo(x + offsetX - 12 * scale, y + offsetY - 4 * scale);
+            ctx.lineTo(x + offsetX + 12 * scale, y + offsetY - 4 * scale);
+            ctx.arc(x + offsetX + 12 * scale, y + offsetY, 4 * scale, -Math.PI/2, Math.PI/2);
+            ctx.lineTo(x + offsetX - 12 * scale, y + offsetY + 4 * scale);
+            ctx.arc(x + offsetX - 12 * scale, y + offsetY, 4 * scale, Math.PI/2, -Math.PI/2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+        
+        // Add litter texture
+        ctx.globalAlpha = 0.2;
+        for (let i = 0; i < 10; i++) {
+            ctx.fillRect(
+                x + (Math.random() - 0.5) * 40 * scale,
+                y + (Math.random() - 0.5) * 20 * scale,
+                3 * scale, 3 * scale
+            );
+        }
+        ctx.globalAlpha = 1;
+    }
+    
+    // DISTINCT TIGER POOP
+    drawTigerLog(ctx, x, y, scale) {
+        // Large segmented carnivore scat with visible hair/fur
+        ctx.beginPath();
+        ctx.moveTo(x - 40 * scale, y - 5 * scale);
+        
+        // Create lumpy, segmented shape
+        for (let i = 0; i <= 4; i++) {
+            const segX = x - 40 * scale + (i * 20 * scale);
+            const segY = y + Math.sin(i) * 8 * scale;
+            if (i === 0) {
+                ctx.moveTo(segX, segY - 8 * scale);
+            } else {
+                ctx.quadraticCurveTo(
+                    segX - 10 * scale, segY - 10 * scale,
+                    segX, segY - 8 * scale
+                );
+            }
+        }
+        
+        // Bottom curve
+        for (let i = 4; i >= 0; i--) {
+            const segX = x - 40 * scale + (i * 20 * scale);
+            const segY = y + Math.sin(i) * 8 * scale;
+            ctx.quadraticCurveTo(
+                segX + 10 * scale, segY + 10 * scale,
+                segX, segY + 8 * scale
+            );
+        }
+        
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        // Add hair/fur texture
+        ctx.strokeStyle = '#8b7355';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 15; i++) {
+            const hairX = x + (Math.random() - 0.5) * 60 * scale;
+            const hairY = y + (Math.random() - 0.5) * 10 * scale;
+            ctx.beginPath();
+            ctx.moveTo(hairX, hairY);
+            ctx.lineTo(hairX + 5 * scale, hairY + 2 * scale);
+            ctx.stroke();
+        }
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+    }
+    
+    // DISTINCT PIG POOP
+    drawPigLog(ctx, x, y, scale) {
+        // Soft, mushy consistency in clumps
+        const clumps = [
+            { x: -20, y: 0, size: 25 },
+            { x: 0, y: -5, size: 20 },
+            { x: 15, y: 3, size: 22 },
+            { x: -5, y: 8, size: 18 }
+        ];
+        
+        clumps.forEach(clump => {
+            ctx.beginPath();
+            ctx.arc(x + clump.x * scale, y + clump.y * scale, clump.size * scale * 0.7, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        
+        // Outline the whole mass
+        ctx.beginPath();
+        ctx.ellipse(x, y, 35 * scale, 18 * scale, 0, 0, Math.PI * 2);
+        ctx.globalAlpha = 0.3;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+    }
+    
+    // DISTINCT PANDA POOP
+    drawPandaLog(ctx, x, y, scale) {
+        // Green cylindrical segments with visible bamboo fibers
+        for (let i = 0; i < 2; i++) {
+            const offsetY = i * 25 * scale;
+            
+            // Main cylinder
+            ctx.beginPath();
+            ctx.ellipse(x, y + offsetY, 25 * scale, 12 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Bamboo fiber texture
+            ctx.strokeStyle = '#8fbc8f';
+            ctx.lineWidth = 1.5;
+            for (let j = 0; j < 8; j++) {
+                const fiberX = x + (Math.random() - 0.5) * 40 * scale;
+                const fiberY = y + offsetY + (Math.random() - 0.5) * 15 * scale;
+                ctx.beginPath();
+                ctx.moveTo(fiberX - 8 * scale, fiberY);
+                ctx.lineTo(fiberX + 8 * scale, fiberY);
+                ctx.stroke();
+            }
+            
+            // Bamboo chunks
+            ctx.fillStyle = '#c0d890';
+            for (let j = 0; j < 4; j++) {
+                ctx.fillRect(
+                    x + (Math.random() - 0.5) * 30 * scale,
+                    y + offsetY + (Math.random() - 0.5) * 10 * scale,
+                    6 * scale, 3 * scale
+                );
+            }
+            ctx.fillStyle = '#5a6b3b';
+        }
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+    }
+    
+    // DISTINCT HORSE BALLS
+    drawHorseBalls(ctx, x, y, scale) {
+        // Neat pile of round, fibrous balls
+        const positions = [
+            [0, -15], [-12, -8], [12, -8],
+            [-18, 0], [0, 0], [18, 0],
+            [-12, 8], [12, 8], [0, 15],
+            [-6, -10], [6, -10]
+        ];
+        
+        positions.forEach(([dx, dy]) => {
+            ctx.beginPath();
+            ctx.arc(x + dx * scale, y + dy * scale, 10 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Add fibrous texture
+            ctx.globalAlpha = 0.3;
+            ctx.beginPath();
+            ctx.arc(x + dx * scale - 3 * scale, y + dy * scale - 3 * scale, 6 * scale, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+        });
+    }
+    
+    // DISTINCT ELEPHANT BOULDER
+    drawElephantBoulder(ctx, x, y, scale) {
+        // Massive fibrous ball with visible plant matter
+        ctx.beginPath();
+        ctx.arc(x, y, 50 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Add fiber texture in rings
+        ctx.globalAlpha = 0.4;
+        for (let r = 40; r > 10; r -= 15) {
+            ctx.beginPath();
+            ctx.arc(x, y, r * scale, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        
+        // Add plant matter chunks
+        ctx.fillStyle = '#a4916d';
+        ctx.globalAlpha = 0.6;
+        for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2;
+            const dist = 20 + Math.random() * 20;
+            ctx.fillRect(
+                x + Math.cos(angle) * dist * scale - 4 * scale,
+                y + Math.sin(angle) * dist * scale - 2 * scale,
+                8 * scale, 4 * scale
+            );
+        }
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#8b7355';
+    }
+    
+    // Additional specific shapes
+    drawCapsule(ctx, x, y, scale) {
+        // Rat droppings - capsule shaped with pointed ends
+        for (let i = 0; i < 8; i++) {
+            const dx = (Math.random() - 0.5) * 50 * scale;
+            const dy = (Math.random() - 0.5) * 40 * scale;
+            const angle = Math.random() * Math.PI;
+            
+            ctx.save();
+            ctx.translate(x + dx, y + dy);
+            ctx.rotate(angle);
+            
+            ctx.beginPath();
+            ctx.moveTo(-7 * scale, 0);
+            ctx.quadraticCurveTo(-7 * scale, -3 * scale, -4 * scale, -3 * scale);
+            ctx.lineTo(4 * scale, -3 * scale);
+            ctx.quadraticCurveTo(7 * scale, -3 * scale, 7 * scale, 0);
+            ctx.quadraticCurveTo(7 * scale, 3 * scale, 4 * scale, 3 * scale);
+            ctx.lineTo(-4 * scale, 3 * scale);
+            ctx.quadraticCurveTo(-7 * scale, 3 * scale, -7 * scale, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+    }
+    
+    drawSinglePellet(ctx, x, y, scale) {
+        // Single pellet with white urate (reptile)
+        ctx.beginPath();
+        ctx.ellipse(x, y, 15 * scale, 10 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        
+        // White urate cap
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(x + 10 * scale, y - 5 * scale, 8 * scale, 6 * scale, Math.PI/4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = ctx.fillStyle;
+    }
+    
+    drawBolus(ctx, x, y, scale) {
+        // Rhino bolus - large rounded segments
+        for (let i = 0; i < 3; i++) {
+            ctx.beginPath();
+            ctx.ellipse(x + (i - 1) * 25 * scale, y, 20 * scale, 15 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        }
+    }
+    
+    drawCylinder(ctx, x, y, scale) {
+        // Caterpillar frass - tiny cylinders
+        for (let i = 0; i < 12; i++) {
+            const cx = x + (Math.random() - 0.5) * 60 * scale;
+            const cy = y + (Math.random() - 0.5) * 50 * scale;
+            
+            ctx.beginPath();
+            ctx.rect(cx - 4 * scale, cy - 2 * scale, 8 * scale, 4 * scale);
+            ctx.fill();
+            ctx.stroke();
+        }
+    }
+    
+    drawBlob(ctx, x, y, scale) {
+        // Chicken dropping with white uric acid cap
+        // Brown base
+        ctx.beginPath();
+        ctx.ellipse(x, y + 5 * scale, 20 * scale, 15 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        
+        // White uric acid cap
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(x, y - 5 * scale, 15 * scale, 10 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#8b6f47';
     }
     
     setupChoices() {
