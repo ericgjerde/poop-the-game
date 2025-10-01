@@ -500,6 +500,11 @@ class PoopGame {
     }
 
     startGame() {
+        // Resume audio context for iOS (requires user interaction)
+        if (this.sounds.ctx.state === 'suspended') {
+            this.sounds.ctx.resume();
+        }
+
         // Use all animals for the game
         const animalPool = [...animalData];
 
