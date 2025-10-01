@@ -312,9 +312,6 @@ class GameState {
         this.currentRound = 0;
         this.totalRounds = 40;
         this.correctAnswers = 0;
-        this.difficulty = 'medium';
-        this.mode = 'classic'; // classic or timed
-        this.timeLeft = 0;
         this.totalGamesPlayed = 0;
         this.highScore = 0;
         this.currentAnimal = null;
@@ -439,15 +436,6 @@ class PoopGame {
     }
 
     attachEventListeners() {
-        // Difficulty and mode buttons
-        document.querySelectorAll('[data-difficulty]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.state.difficulty = e.currentTarget.dataset.difficulty;
-                this.state.mode = e.currentTarget.dataset.mode || 'classic';
-                this.showModeInfo();
-            });
-        });
-
         // Start game button
         document.getElementById('start-game-btn')?.addEventListener('click', () => {
             this.startGame();
@@ -491,21 +479,6 @@ class PoopGame {
         });
     }
 
-    showModeInfo() {
-        const infoEl = document.getElementById('mode-info');
-        if (!infoEl) return;
-
-        let info = '';
-        if (this.state.mode === 'timed') {
-            info = `<strong>Timed Mode:</strong> 20 seconds per question! Quick thinking = bonus points! ⏱️`;
-        } else {
-            info = `<strong>Classic Mode:</strong> Take your time and learn about each animal's unique droppings! 🎓`;
-        }
-        infoEl.innerHTML = info;
-        infoEl.style.display = 'block';
-
-        document.getElementById('start-game-btn').disabled = false;
-    }
 
     resizeParticleCanvas() {
         this.particleCanvas.width = window.innerWidth;
@@ -527,16 +500,8 @@ class PoopGame {
     }
 
     startGame() {
-        // Get animals based on difficulty
-        let animalPool;
-        if (this.state.difficulty === 'easy') {
-            animalPool = animalData.filter(a => a.difficulty === 'easy' ||
-                (a.difficulty === 'medium' && a.category === 'common'));
-        } else if (this.state.difficulty === 'medium') {
-            animalPool = animalData.filter(a => a.difficulty !== 'hard');
-        } else {
-            animalPool = [...animalData];
-        }
+        // Use all animals for the game
+        const animalPool = [...animalData];
 
         // Shuffle and select animals
         this.state.gameAnimals = this.shuffleArray(animalPool).slice(0, this.state.totalRounds);
@@ -557,12 +522,8 @@ class PoopGame {
         this.startScreen.classList.remove('active');
         this.gameScreen.classList.add('active');
 
-        // Setup timer for timed mode
-        if (this.state.mode === 'timed') {
-            this.timerEl.parentElement.style.display = 'block';
-        } else {
-            this.timerEl.parentElement.style.display = 'none';
-        }
+        // Hide timer (no timed mode)
+        this.timerEl.parentElement.style.display = 'none';
 
         this.nextRound();
     }
@@ -605,11 +566,6 @@ class PoopGame {
 
         // Setup choices
         this.setupChoices();
-
-        // Start timer for timed mode
-        if (this.state.mode === 'timed') {
-            this.startTimer();
-        }
     }
 
     startTimer() {
@@ -810,13 +766,6 @@ class PoopGame {
         let points = 100;
         if (this.state.hintUsed) points -= 50;
         if (this.state.fiftyFiftyUsed) points -= 25;
-
-        // Speed bonus in timed mode
-        if (this.state.mode === 'timed' && answerTime < 5) {
-            const speedBonus = Math.floor((5 - answerTime) * 20);
-            points += speedBonus;
-            this.particles.createFloatingText(x, y - 50, `+${speedBonus} SPEED!`, '#f9ca24');
-        }
 
         // Streak bonus
         points += this.state.streak * 10;
@@ -1127,7 +1076,7 @@ class PoopGame {
         );
 
         const choices = [];
-        if (sameCategory.length > 0 && this.state.difficulty !== 'easy') {
+        if (sameCategory.length > 0) {
             choices.push(sameCategory[Math.floor(Math.random() * sameCategory.length)]);
         }
 
