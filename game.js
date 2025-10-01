@@ -534,43 +534,57 @@ class PoopGame {
     }
 
     nextRound() {
-        if (this.state.currentRound >= this.state.totalRounds) {
-            this.endGame();
-            return;
+        try {
+            if (this.state.currentRound >= this.state.totalRounds) {
+                this.endGame();
+                return;
+            }
+
+            // Stop any existing timer
+            if (this.timerInterval) {
+                clearInterval(this.timerInterval);
+            }
+
+            // Reset round state
+            this.state.fiftyFiftyUsed = false;
+            this.state.hintUsed = false;
+            this.hintText.classList.add('hidden');
+            this.feedbackEl.classList.add('hidden');
+
+            // Enable buttons
+            this.choiceButtons.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('correct', 'incorrect', 'eliminated');
+            });
+            this.hintBtn.disabled = false;
+            this.fiftyFiftyBtn.disabled = false;
+
+            // Get current animal
+            this.state.currentAnimal = this.state.gameAnimals[this.state.currentRound];
+
+            if (!this.state.currentAnimal) {
+                console.error(`No animal found for round ${this.state.currentRound}`);
+                this.endGame();
+                return;
+            }
+
+            console.log(`Round ${this.state.currentRound + 1}: ${this.state.currentAnimal.name} (${this.state.currentAnimal.poopShape})`);
+
+            this.state.currentRound++;
+            this.state.answerStartTime = Date.now();
+
+            // Update round display
+            this.updateDisplay();
+
+            // Draw poop
+            this.drawPoop(this.state.currentAnimal);
+
+            // Setup choices
+            this.setupChoices();
+        } catch (error) {
+            console.error('Error in nextRound:', error);
+            alert(`Game error: ${error.message}. Please refresh and try again.`);
         }
-
-        // Stop any existing timer
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-        }
-
-        // Reset round state
-        this.state.fiftyFiftyUsed = false;
-        this.state.hintUsed = false;
-        this.hintText.classList.add('hidden');
-        this.feedbackEl.classList.add('hidden');
-
-        // Enable buttons
-        this.choiceButtons.forEach(btn => {
-            btn.disabled = false;
-            btn.classList.remove('correct', 'incorrect', 'eliminated');
-        });
-        this.hintBtn.disabled = false;
-        this.fiftyFiftyBtn.disabled = false;
-
-        // Get current animal
-        this.state.currentAnimal = this.state.gameAnimals[this.state.currentRound];
-        this.state.currentRound++;
-        this.state.answerStartTime = Date.now();
-
-        // Update round display
-        this.updateDisplay();
-
-        // Draw poop
-        this.drawPoop(this.state.currentAnimal);
-
-        // Setup choices
-        this.setupChoices();
     }
 
     startTimer() {
@@ -647,10 +661,17 @@ class PoopGame {
 
         // Draw based on shape - no shadow, it looks dumb
         const drawMethod = `draw${animal.poopShape.charAt(0).toUpperCase() + animal.poopShape.slice(1)}`;
-        if (typeof this[drawMethod] === 'function') {
-            this[drawMethod](ctx, centerX, centerY, scale, animal.poopColor);
-        } else {
-            this.drawGenericPoop(ctx, centerX, centerY, scale, animal.poopColor);
+        try {
+            if (typeof this[drawMethod] === 'function') {
+                this[drawMethod](ctx, centerX, centerY, scale, animal.poopColor);
+            } else {
+                console.warn(`Drawing method ${drawMethod} not found for ${animal.name}, using generic poop`);
+                this.drawGenericPoop(ctx, centerX, centerY, scale);
+            }
+        } catch (error) {
+            console.error(`Error drawing poop for ${animal.name} (${animal.poopShape}):`, error);
+            // Draw fallback generic poop
+            this.drawGenericPoop(ctx, centerX, centerY, scale);
         }
     }
 
@@ -719,41 +740,52 @@ class PoopGame {
     }
 
     checkAnswer(choiceIndex) {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
+        try {
+            if (this.timerInterval) {
+                clearInterval(this.timerInterval);
+            }
+
+            const answerTime = (Date.now() - this.state.answerStartTime) / 1000;
+            const selectedAnimal = this.state.choices[choiceIndex];
+
+            if (!selectedAnimal || !this.state.currentAnimal) {
+                console.error('Invalid game state in checkAnswer');
+                return;
+            }
+
+            const correct = selectedAnimal.name === this.state.currentAnimal.name;
+
+            // Disable all buttons
+            this.choiceButtons.forEach(btn => btn.disabled = true);
+
+            // Get button position for particles
+            const selectedButton = this.choiceButtons[choiceIndex];
+            const rect = selectedButton.getBoundingClientRect();
+            const canvasRect = this.particleCanvas.getBoundingClientRect();
+            const particleX = rect.left + rect.width / 2 - canvasRect.left;
+            const particleY = rect.top + rect.height / 2 - canvasRect.top;
+
+            // Show result
+            if (correct) {
+                selectedButton.classList.add('correct');
+                this.handleCorrectAnswer(answerTime, particleX, particleY);
+            } else {
+                selectedButton.classList.add('incorrect');
+                // Show correct answer
+                this.choiceButtons.forEach((btn, idx) => {
+                    if (this.state.choices[idx].name === this.state.currentAnimal.name) {
+                        btn.classList.add('correct');
+                    }
+                });
+                this.handleIncorrectAnswer(particleX, particleY);
+            }
+
+            // Show feedback
+            this.showFeedback(correct, false, answerTime);
+        } catch (error) {
+            console.error('Error in checkAnswer:', error);
+            alert(`Error processing answer: ${error.message}`);
         }
-
-        const answerTime = (Date.now() - this.state.answerStartTime) / 1000;
-        const selectedAnimal = this.state.choices[choiceIndex];
-        const correct = selectedAnimal.name === this.state.currentAnimal.name;
-
-        // Disable all buttons
-        this.choiceButtons.forEach(btn => btn.disabled = true);
-
-        // Get button position for particles
-        const selectedButton = this.choiceButtons[choiceIndex];
-        const rect = selectedButton.getBoundingClientRect();
-        const canvasRect = this.particleCanvas.getBoundingClientRect();
-        const particleX = rect.left + rect.width / 2 - canvasRect.left;
-        const particleY = rect.top + rect.height / 2 - canvasRect.top;
-
-        // Show result
-        if (correct) {
-            selectedButton.classList.add('correct');
-            this.handleCorrectAnswer(answerTime, particleX, particleY);
-        } else {
-            selectedButton.classList.add('incorrect');
-            // Show correct answer
-            this.choiceButtons.forEach((btn, idx) => {
-                if (this.state.choices[idx].name === this.state.currentAnimal.name) {
-                    btn.classList.add('correct');
-                }
-            });
-            this.handleIncorrectAnswer(particleX, particleY);
-        }
-
-        // Show feedback
-        this.showFeedback(correct, false, answerTime);
     }
 
     handleCorrectAnswer(answerTime, x, y) {
@@ -1095,8 +1127,8 @@ class PoopGame {
 
     getAnimalEmoji(animalName) {
         const emojiMap = {
-            'Earwig': '🐛', 'Caterpillar': '🐛', 'Cricket': '🦗', 'Beetle': '🪲',
-            'Pigeon': '🕊️', 'Seagull': '🦅', 'Owl': '🦉', 'Parrot': '🦜', 'Chicken': '🐔',
+            'Earwig': '🪳', 'Caterpillar': '🐛', 'Cricket': '🦗', 'Beetle': '🪲',
+            'Pigeon': '🕊️', 'Seagull': '🐦', 'Owl': '🦉', 'Parrot': '🦜', 'Chicken': '🐔',
             'Cow': '🐄', 'Horse': '🐴', 'Pig': '🐷', 'Sheep': '🐑', 'Goat': '🐐', 'Llama': '🦙',
             'Alligator': '🐊', 'Snake': '🐍', 'Iguana': '🦎', 'Turtle': '🐢', 'Gecko': '🦎',
             'Elephant': '🐘', 'Tiger': '🐅', 'Giraffe': '🦒', 'Hippo': '🦛', 'Rhino': '🦏',
@@ -1178,6 +1210,63 @@ class PoopGame {
         ctx.beginPath();
         ctx.arc(x, y, 10 * scale, 0, Math.PI * 2);
         ctx.fill();
+    }
+
+    drawAcidsplat(ctx, x, y, scale, baseColor) {
+        // Larger, more aggressive splatter for seagull
+        ctx.fillStyle = baseColor;
+        ctx.beginPath();
+        for (let i = 0; i < 12; i++) {
+            const angle = (i / 12) * Math.PI * 2;
+            const radius = (40 + Math.random() * 30) * scale;
+            const px = x + Math.cos(angle) * radius;
+            const py = y + Math.sin(angle) * radius;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+
+        // Dark center - larger than pigeon
+        ctx.fillStyle = '#2a2a2a';
+        ctx.beginPath();
+        ctx.arc(x, y, 15 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Add greenish-yellow acidic tint around edges
+        ctx.save();
+        ctx.globalAlpha = 0.3;
+        ctx.fillStyle = '#c4d82e';
+        for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2;
+            const radius = (35 + Math.random() * 25) * scale;
+            ctx.beginPath();
+            ctx.arc(
+                x + Math.cos(angle) * radius,
+                y + Math.sin(angle) * radius,
+                8 * scale, 0, Math.PI * 2
+            );
+            ctx.fill();
+        }
+        ctx.restore();
+
+        // Add texture to show corrosive nature
+        ctx.save();
+        ctx.globalAlpha = 0.2;
+        ctx.strokeStyle = '#9db82a';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 6; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = Math.random() * 30 * scale;
+            ctx.beginPath();
+            ctx.arc(
+                x + Math.cos(angle) * dist,
+                y + Math.sin(angle) * dist,
+                5 * scale, 0, Math.PI * 2
+            );
+            ctx.stroke();
+        }
+        ctx.restore();
     }
 
     drawPatty(ctx, x, y, scale, baseColor) {

@@ -62,8 +62,8 @@ const animalData = [
         category: "bird",
         difficulty: "medium",
         poopDescription: "Large white splatter, often with dark center",
-        poopShape: "splat",
-        poopColor: "#f5f5f5",
+        poopShape: "acidsplat",
+        poopColor: "#f0f0e8",
         poopSize: 25,
         funFact: "Seagull poop is so acidic it can damage car paint!",
         hint: "Coastal bird known for stealing french fries"
