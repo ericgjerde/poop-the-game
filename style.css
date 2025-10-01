@@ -560,25 +560,98 @@ h1 {
 /* RESPONSIVE */
 @media (max-width: 768px) {
     h1 {
-        font-size: 1.8em;
+        font-size: 1.6em;
+        margin-bottom: 6px;
     }
 
     #game-stats {
-        font-size: 0.9em;
-        gap: 8px;
+        font-size: 0.85em;
+        gap: 6px;
     }
 
     .stat {
-        padding: 4px 10px;
+        padding: 3px 8px;
     }
 
-    #choices-container {
-        grid-template-columns: 1fr;
+    header {
+        padding: 10px 15px;
+    }
+
+    .screen {
+        padding: 10px 15px;
     }
 
     #poop-canvas {
-        width: 200px;
-        height: 200px;
+        width: 150px;
+        height: 150px;
+    }
+
+    #poop-display {
+        margin-bottom: 10px;
+    }
+
+    #poop-hints {
+        margin-top: 8px;
+        gap: 6px;
+    }
+
+    .power-up-btn {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+
+    #hint-text {
+        padding: 8px;
+        font-size: 0.85em;
+        margin-top: 8px;
+    }
+
+    #choices-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .choice-btn {
+        padding: 8px;
+        gap: 4px;
+    }
+
+    .animal-img {
+        width: 40px;
+        height: 40px;
+        font-size: 32px;
+    }
+
+    .animal-name {
+        font-size: 0.9em;
+    }
+
+    #feedback {
+        padding: 12px;
+        margin-top: 10px;
+    }
+
+    #feedback-title {
+        font-size: 1.3em;
+        margin-bottom: 8px;
+    }
+
+    #feedback-text {
+        font-size: 0.9em;
+        margin-bottom: 8px;
+    }
+
+    #fun-fact {
+        font-size: 0.85em;
+        padding: 8px;
+        margin: 8px 0;
+    }
+
+    .btn {
+        padding: 10px 24px;
+        font-size: 0.95em;
+        margin: 6px;
     }
 
     .content h2 {
@@ -592,29 +665,44 @@ h1 {
 
 @media (max-width: 480px) {
     body {
-        padding: 10px;
+        padding: 5px;
     }
 
     h1 {
-        font-size: 1.5em;
+        font-size: 1.4em;
+        margin-bottom: 4px;
+    }
+
+    #game-stats {
+        font-size: 0.8em;
+        gap: 4px;
+    }
+
+    .stat {
+        padding: 2px 6px;
+    }
+
+    header {
+        padding: 8px 12px;
     }
 
     .screen {
-        padding: 20px;
-        min-height: auto;
+        padding: 8px 12px;
     }
 
-    .btn {
-        padding: 12px 30px;
+    #poop-canvas {
+        width: 140px;
+        height: 140px;
+    }
+
+    .content h2 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+
+    .content > p {
         font-size: 1em;
-    }
-
-    #poop-hints {
-        flex-direction: column;
-    }
-
-    .power-up-btn {
-        width: 100%;
+        margin-bottom: 20px;
     }
 }
 
