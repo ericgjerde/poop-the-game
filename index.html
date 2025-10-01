@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Particle Canvas Overlay -->
+    <canvas id="particle-canvas"></canvas>
+
     <div id="game-container">
         <header>
             <h1>💩 Whose Poo? 🔍</h1>
@@ -19,39 +22,88 @@
                     <span class="stat-label">Streak:</span>
                     <span id="streak">0</span>
                 </div>
+                <div class="stat" id="multiplier-stat">
+                    <span class="stat-label">Multiplier:</span>
+                    <span id="multiplier">1x</span>
+                </div>
                 <div class="stat">
                     <span class="stat-label">Round:</span>
                     <span id="round">1/40</span>
                 </div>
+                <div class="stat" id="timer-stat" style="display: none;">
+                    <span class="stat-label">Time:</span>
+                    <span id="timer">20</span>
+                </div>
             </div>
+            <button id="sound-toggle" class="icon-btn">🔊</button>
         </header>
 
+        <!-- START SCREEN -->
         <div id="start-screen" class="screen active">
             <div class="content">
                 <h2>Welcome to Whose Poo?</h2>
                 <p>Can you identify animals by their droppings?</p>
-                <div class="difficulty-select">
-                    <h3>Choose Difficulty:</h3>
-                    <button class="btn difficulty-btn" data-difficulty="easy">
-                        🐣 Easy
-                        <span class="difficulty-desc">Common animals, clear differences</span>
-                    </button>
-                    <button class="btn difficulty-btn" data-difficulty="medium">
-                        🦊 Medium
-                        <span class="difficulty-desc">Mix of common and unusual animals</span>
-                    </button>
-                    <button class="btn difficulty-btn" data-difficulty="hard">
-                        🦎 Hard
-                        <span class="difficulty-desc">Includes insects and rare animals</span>
-                    </button>
+
+                <div class="mode-selection">
+                    <h3>Choose Your Challenge:</h3>
+
+                    <div class="mode-grid">
+                        <!-- Classic Easy -->
+                        <button class="mode-card" data-difficulty="easy" data-mode="classic">
+                            <div class="mode-icon">🐣</div>
+                            <h4>Classic Easy</h4>
+                            <p>Common animals, take your time</p>
+                        </button>
+
+                        <!-- Classic Medium -->
+                        <button class="mode-card" data-difficulty="medium" data-mode="classic">
+                            <div class="mode-icon">🦊</div>
+                            <h4>Classic Medium</h4>
+                            <p>Mix of animals, steady pace</p>
+                        </button>
+
+                        <!-- Classic Hard -->
+                        <button class="mode-card" data-difficulty="hard" data-mode="classic">
+                            <div class="mode-icon">🦎</div>
+                            <h4>Classic Hard</h4>
+                            <p>All creatures, no rush</p>
+                        </button>
+
+                        <!-- Timed Easy -->
+                        <button class="mode-card mode-timed" data-difficulty="easy" data-mode="timed">
+                            <div class="mode-icon">⚡</div>
+                            <h4>Timed Easy</h4>
+                            <p>20s per question!</p>
+                        </button>
+
+                        <!-- Timed Medium -->
+                        <button class="mode-card mode-timed" data-difficulty="medium" data-mode="timed">
+                            <div class="mode-icon">🔥</div>
+                            <h4>Timed Medium</h4>
+                            <p>Speed + strategy!</p>
+                        </button>
+
+                        <!-- Timed Hard -->
+                        <button class="mode-card mode-timed" data-difficulty="hard" data-mode="timed">
+                            <div class="mode-icon">💥</div>
+                            <h4>Timed Hard</h4>
+                            <p>Ultimate challenge!</p>
+                        </button>
+                    </div>
+
+                    <div id="mode-info" class="mode-info" style="display: none;"></div>
+
+                    <button id="start-game-btn" class="btn btn-primary" disabled>Start Game</button>
+                    <button id="achievement-btn" class="btn btn-secondary">🏆 Achievements</button>
                 </div>
             </div>
         </div>
 
+        <!-- GAME SCREEN -->
         <div id="game-screen" class="screen">
             <div id="poop-display">
                 <div id="poop-container">
-                    <canvas id="poop-canvas" width="300" height="300"></canvas>
+                    <canvas id="poop-canvas" width="220" height="220"></canvas>
                     <div id="poop-hints">
                         <button id="hint-btn" class="power-up-btn">
                             💡 Hint (-50 pts)
@@ -91,6 +143,7 @@
             </div>
         </div>
 
+        <!-- END SCREEN -->
         <div id="end-screen" class="screen">
             <div class="content">
                 <h2>Game Complete!</h2>
@@ -99,9 +152,27 @@
                     <p>Correct Answers: <span id="correct-count">0</span>/40</p>
                     <p>Best Streak: <span id="best-streak">0</span></p>
                     <p>Accuracy: <span id="accuracy">0</span>%</p>
+                    <p>High Score: <span id="high-score-display">0</span></p>
                 </div>
                 <div id="rank"></div>
+
+                <div id="new-achievements"></div>
+
                 <button id="play-again-btn" class="btn">Play Again</button>
+            </div>
+        </div>
+
+        <!-- ACHIEVEMENT SCREEN -->
+        <div id="achievement-screen" class="screen">
+            <div class="content">
+                <h2>🏆 Achievements</h2>
+                <p class="achievement-progress">Unlocked: <span id="achievement-count">0 / 12</span></p>
+
+                <div id="achievement-list" class="achievement-grid">
+                    <!-- Achievements populated by JavaScript -->
+                </div>
+
+                <button id="achievement-back-btn" class="btn">Back</button>
             </div>
         </div>
     </div>
